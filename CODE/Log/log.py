@@ -16,6 +16,10 @@ class classlog():
         self.className = className
         self.debug = debug
 
+        # Enable debug mode
+        if(self.debug):
+            self.log = self.log_debug
+
         # Create log folder if not exist
         # Always create log folder in the same directory as this file
         self.rootPath = f"{os.path.abspath(__file__)}/../logFile"
@@ -33,11 +37,7 @@ class classlog():
         # Start thread for checking date
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
-        
-        # Enable debug mode
-        if(self.debug):
-            self.log = self.log_debug
-        
+
     def run(self):
         while True:
             # Create new log file every day
@@ -51,7 +51,7 @@ class classlog():
             else :
                 time.sleep(60)
                 self.logFile.flush()
-            
+
     def log(self, msg : str):
         '''
         To log your message in the format of [YYYY-MM-DD HH:MM:SS] msg
