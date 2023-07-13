@@ -12,9 +12,10 @@ class classlog():
             className (str): The name of the class that is logging .
             
         '''
-       
+
         # Create log folder if not exist
-        self.rootPath = f"{os.path.abspath('.')}/logFile"
+        # Always create log folder in the same directory as this file
+        self.rootPath = f"{os.path.abspath(__file__)}/../logFile"
         if not os.path.exists(self.rootPath):
             os.makedirs(self.rootPath)
 
@@ -30,7 +31,7 @@ class classlog():
         # Start thread for checking date
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
-    
+
     def run(self):
         while True:
             # Create new log file every day
@@ -46,7 +47,7 @@ class classlog():
                 self.logFile.flush()
 
     def log(self, msg : str):
-        logMsg = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + " " + msg +"\n"
+        logMsg = time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()) + " " + msg +"\n"
         if(self.fileState):
             self.logFile.write(logMsg)
         else :
