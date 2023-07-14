@@ -2,6 +2,8 @@ import time
 import threading
 import os
 
+_rootPath = os.path.abspath(__file__) + "/../logFile"
+
 class classlog():
 
     def __init__(self, className : str, debug = False ):
@@ -22,13 +24,12 @@ class classlog():
 
         # Create log folder if not exist
         # Always create log folder in the same directory as this file
-        self.rootPath = f"{os.path.abspath(__file__)}/../logFile"
-        if not os.path.exists(self.rootPath):
-            os.makedirs(self.rootPath)
+        if not os.path.exists(_rootPath):
+            os.makedirs(_rootPath)
 
         # Create log file
         self.currentDate = time.strftime("%Y-%m-%d", time.localtime())
-        self.logFilePath = f"{self.rootPath}/{self.currentDate}-{self.className}.log"
+        self.logFilePath = f"{_rootPath}/{self.currentDate}-{self.className}.log"
         self.logFile = open(self.logFilePath, 'a', encoding="utf-8")
         self.fileState = True
         self.log("====================================================================")
