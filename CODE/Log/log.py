@@ -2,9 +2,11 @@ import time
 import threading
 import os
 
+_rootPath = os.path.abspath(__file__) + "/../logFile"
+
 class classlog():
 
-    def __init__(self, className : str):
+    def __init__(self, className : str, debug = False ):
         '''
         This class is used for logging.
 
@@ -13,24 +15,31 @@ class classlog():
             
         '''
 
+        self.className = className
+        self.debug = debug
+
+        # Enable debug mode
+        if(self.debug):
+            self.log = self.log_debug
+
         # Create log folder if not exist
         # Always create log folder in the same directory as this file
-        self.rootPath = f"{os.path.abspath(__file__)}/../logFile"
-        if not os.path.exists(self.rootPath):
-            os.makedirs(self.rootPath)
+        if not os.path.exists(_rootPath):
+            os.makedirs(_rootPath)
 
         # Create log file
         self.currentDate = time.strftime("%Y-%m-%d", time.localtime())
-        self.className = className
-        self.logFilePath = f"{self.rootPath}/{self.currentDate}-{self.className}.log"
+        self.logFilePath = f"{_rootPath}/{self.currentDate}-{self.className}.log"
         self.logFile = open(self.logFilePath, 'a', encoding="utf-8")
         self.fileState = True
         self.log("====================================================================")
         self.log("NEW INSTANCE RUNNING")
 
         # Start thread for checking date
-        self.thread = threading.Thread(target=self.run)
-        self.thread.start()
+        # Only in non-debug mode
+        if(not self.debug):
+            self.thread = threading.Thread(target=self.run)
+            self.thread.start()
 
     def run(self):
         while True:
@@ -47,6 +56,10 @@ class classlog():
                 self.logFile.flush()
 
     def log(self, msg : str):
+        '''
+        To log your message in the format of [YYYY-MM-DD HH:MM:SS] msg
+        '''
+
         logMsg = time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()) + " " + msg +"\n"
         if(self.fileState):
             self.logFile.write(logMsg)
@@ -54,3 +67,14 @@ class classlog():
             while not self.fileState:
                 time.sleep(1)
             self.logFile.write(logMsg)
+
+    def log_debug(self, msg : str):
+        '''
+        To log your message in the format of [YYYY-MM-DD HH:MM:SS] msg
+        Debug mode will flush the log file after every log
+        '''
+
+        logMsg = time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()) + " " + msg +"\n"
+        if(self.fileState):
+            self.logFile.write(logMsg)
+            self.logFile.flush()
