@@ -36,8 +36,10 @@ class classlog():
         self.log("NEW INSTANCE RUNNING")
 
         # Start thread for checking date
-        self.thread = threading.Thread(target=self.run)
-        self.thread.start()
+        # Only in non-debug mode
+        if(not self.debug):
+            self.thread = threading.Thread(target=self.run)
+            self.thread.start()
 
     def run(self):
         while True:
